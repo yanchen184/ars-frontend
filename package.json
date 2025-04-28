@@ -1,7 +1,8 @@
 {
   "name": "ars-frontend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
+  "homepage": "https://yanchen184.github.io/ars-frontend/",
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@testing-library/jest-dom": "^5.16.5",
