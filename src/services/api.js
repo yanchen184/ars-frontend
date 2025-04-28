@@ -18,7 +18,9 @@ const apiService = {
    * @returns {Promise} - Promise with response data
    */
   analyzeAddress: (address) => {
-    return api.get(`/find-hk-addresses?address=${encodeURIComponent(address)}`);
+    // Add timestamp to prevent caching
+    const timestamp = new Date().getTime();
+    return api.get(`/find-hk-addresses?address=${encodeURIComponent(address)}&_t=${timestamp}`);
   },
 
   /**
@@ -28,7 +30,8 @@ const apiService = {
    * @returns {Promise} - Promise with response data
    */
   getAddressRecords: (pageNo = 1, pageSize = 10) => {
-    return api.get(`/records?pageNo=${pageNo}&pageSize=${pageSize}`);
+    const timestamp = new Date().getTime();
+    return api.get(`/records?pageNo=${pageNo}&pageSize=${pageSize}&_t=${timestamp}`);
   },
 
   /**
@@ -36,7 +39,8 @@ const apiService = {
    * @returns {Promise} - Promise with response data
    */
   testRedis: () => {
-    return api.get('/test-redis');
+    const timestamp = new Date().getTime();
+    return api.get(`/test-redis?_t=${timestamp}`);
   },
 
   /**
@@ -45,8 +49,12 @@ const apiService = {
    * @returns {Promise} - Promise with response data
    */
   sendMessage: (message) => {
-    return api.get(`/send/${encodeURIComponent(message)}`);
+    const timestamp = new Date().getTime();
+    return api.get(`/send/${encodeURIComponent(message)}?_t=${timestamp}`);
   },
 };
+
+// Log the API base URL for debugging
+console.log('API Base URL:', api.defaults.baseURL);
 
 export default apiService;
