@@ -11,7 +11,7 @@ import {
 const { Header, Content, Footer, Sider } = Layout;
 
 // Application version - displayed for easy tracking
-const APP_VERSION = 'v0.1.0';
+const APP_VERSION = 'v0.1.1'; // Updated version number to confirm deployment
 
 /**
  * Main layout component for the application
