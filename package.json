@@ -1,6 +1,6 @@
 {
   "name": "ars-frontend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "homepage": "https://yanchen184.github.io/ars-frontend/",
   "dependencies": {
@@ -41,6 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "proxy": "http://localhost:8080"
+  }
 }
