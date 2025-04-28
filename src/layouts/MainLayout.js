@@ -11,7 +11,7 @@ import {
 const { Header, Content, Footer, Sider } = Layout;
 
 // Application version - displayed for easy tracking
-const APP_VERSION = 'v0.1.3'; // Updated version number with 192.168.1.165:8080 API
+const APP_VERSION = 'v0.1.4'; // Updated version number with hktv_ars API path
 
 /**
  * Main layout component for the application
