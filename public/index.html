@@ -12,6 +12,20 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>ARS - 地址解析系統</title>
+    <!-- 為GitHub Pages路由添加腳本 -->
+    <script type="text/javascript">
+      // 用於處理GitHub Pages單頁應用路由的工具
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
   </head>
   <body>
     <noscript>您需要啟用JavaScript才能運行此應用。</noscript>
