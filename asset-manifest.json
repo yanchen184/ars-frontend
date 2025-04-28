@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/ars-frontend/static/css/main.385fee15.css",
-    "main.js": "/ars-frontend/static/js/main.ad712e07.js",
+    "main.js": "/ars-frontend/static/js/main.118938e7.js",
     "static/js/453.a41d9fa3.chunk.js": "/ars-frontend/static/js/453.a41d9fa3.chunk.js",
     "index.html": "/ars-frontend/index.html",
     "main.385fee15.css.map": "/ars-frontend/static/css/main.385fee15.css.map",
-    "main.ad712e07.js.map": "/ars-frontend/static/js/main.ad712e07.js.map",
+    "main.118938e7.js.map": "/ars-frontend/static/js/main.118938e7.js.map",
     "453.a41d9fa3.chunk.js.map": "/ars-frontend/static/js/453.a41d9fa3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.385fee15.css",
-    "static/js/main.ad712e07.js"
+    "static/js/main.118938e7.js"
   ]
 }
