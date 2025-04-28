@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base axios instance for all API calls
 const api = axios.create({
-  baseURL: 'http://192.168.1.165:8080',
+  baseURL: 'http://192.168.1.165:8080/hktv_ars',
   headers: {
     'Content-Type': 'application/json',
   },
