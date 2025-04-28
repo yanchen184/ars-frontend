@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, HashRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import zhTW from 'antd/es/locale/zh_TW';
 
@@ -10,17 +10,14 @@ import AddressAnalysis from './pages/AddressAnalysis';
 import AddressRecords from './pages/AddressRecords';
 import './App.css';
 
-// Check if the app is running on GitHub Pages
-const isGitHubPages = window.location.hostname === 'yanchen184.github.io';
+// GitHub Pages基礎路徑
+const basename = process.env.PUBLIC_URL;
 
 // Main App component
 function App() {
-  // Use HashRouter for GitHub Pages deployment to avoid 404 errors
-  const RouterComponent = isGitHubPages ? HashRouter : Router;
-  
   return (
     <ConfigProvider locale={zhTW}>
-      <RouterComponent>
+      <Router basename={basename}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Dashboard />} />
@@ -28,7 +25,7 @@ function App() {
             <Route path="address-records" element={<AddressRecords />} />
           </Route>
         </Routes>
-      </RouterComponent>
+      </Router>
     </ConfigProvider>
   );
 }
