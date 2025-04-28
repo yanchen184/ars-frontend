@@ -31,6 +31,8 @@ const apiService = {
    */
   getAddressRecords: (pageNo = 1, pageSize = 10) => {
     const timestamp = new Date().getTime();
+    // 添加調試信息
+    console.log(`Sending API request to: ${api.defaults.baseURL}/records?pageNo=${pageNo}&pageSize=${pageSize}&_t=${timestamp}`);
     return api.get(`/records?pageNo=${pageNo}&pageSize=${pageSize}&_t=${timestamp}`);
   },
 

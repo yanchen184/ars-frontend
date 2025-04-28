@@ -29,7 +29,13 @@ const AddressAnalysis = () => {
     setError('');
     try {
       const response = await apiService.analyzeAddress(address);
-      setResult(response.data);
+      console.log('API Response:', response.data);
+      // Add a success field for UI display
+      const resultData = {
+        ...response.data.data,
+        success: response.data.status === 200
+      };
+      setResult(resultData);
     } catch (err) {
       console.error('Address analysis error:', err);
       setError('地址分析失敗: ' + (err.response?.data?.message || err.message));
@@ -60,8 +66,12 @@ const AddressAnalysis = () => {
             }
           </Descriptions.Item>
           
-          {result.district && (
-            <Descriptions.Item label="區域">{result.district}</Descriptions.Item>
+          {result.address && (
+            <Descriptions.Item label="地址">{result.address}</Descriptions.Item>
+          )}
+          
+          {result.dist && (
+            <Descriptions.Item label="區域">{result.dist}</Descriptions.Item>
           )}
           
           {result.estate && (
@@ -72,29 +82,25 @@ const AddressAnalysis = () => {
             <Descriptions.Item label="街道">{result.street}</Descriptions.Item>
           )}
           
-          {result.streetNumber && (
-            <Descriptions.Item label="街道號碼">{result.streetNumber}</Descriptions.Item>
+          {result.number && (
+            <Descriptions.Item label="門牌號碼">{result.number}</Descriptions.Item>
           )}
           
-          {result.floor && (
-            <Descriptions.Item label="樓層">{result.floor}</Descriptions.Item>
+          {result.deliveryZoneCode && (
+            <Descriptions.Item label="配送區碼">{result.deliveryZoneCode}</Descriptions.Item>
           )}
           
-          {result.unit && (
-            <Descriptions.Item label="單位">{result.unit}</Descriptions.Item>
+          {result.latitude && result.longitude && (
+            <Descriptions.Item label="經緯度">
+              {result.latitude.toString()}, {result.longitude.toString()}
+            </Descriptions.Item>
           )}
           
-          {result.building && (
-            <Descriptions.Item label="建築物">{result.building}</Descriptions.Item>
-          )}
-          
-          {result.region && (
-            <Descriptions.Item label="地區">{result.region}</Descriptions.Item>
-          )}
-          
-          {result.confidence && (
-            <Descriptions.Item label="置信度">
-              {(result.confidence * 100).toFixed(2)}%
+          {result.willDelivery !== undefined && (
+            <Descriptions.Item label="可配送">
+              {result.willDelivery ? 
+                <span style={{ color: 'green' }}>可以配送</span> : 
+                <span style={{ color: 'red' }}>無法配送</span>}
             </Descriptions.Item>
           )}
         </Descriptions>

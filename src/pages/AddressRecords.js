@@ -29,25 +29,83 @@ const AddressRecords = () => {
   const fetchRecords = async (pageNo = 1, pageSize = 10) => {
     setLoading(true);
     try {
+      console.log('Fetching records with pageNo:', pageNo, 'pageSize:', pageSize);
       const response = await apiService.getAddressRecords(pageNo, pageSize);
-      setData(response.data.data || []);
-      setPagination({
-        current: pageNo,
-        pageSize: pageSize,
-        total: response.data.total || 0,
-      });
+      console.log('API Response for records (raw):', response);
+      
+      // 查看真實返回的數據結構
+      const apiResponse = response.data;
+      console.log('API Response structure:', apiResponse);
+      
+      // 檢查是否有包含狀態碼的標準封裝結構
+      if (apiResponse && apiResponse.status === 200 && apiResponse.data) {
+        console.log('Using standard API wrapper structure');
+        
+        // 檢查真正的數據封裝
+        const realData = apiResponse.data;
+        
+        if (realData && Array.isArray(realData.list)) {
+          console.log('Found list data in response.data.data:', realData.list);
+          setData(realData.list || []);
+          
+          // 設置分頁信息
+          const paginationInfo = realData.pagination || {};
+          setPagination({
+            current: paginationInfo.currentPage || pageNo,
+            pageSize: paginationInfo.pageSize || pageSize,
+            total: paginationInfo.totalElements || 0,
+          });
+        } else {
+          console.warn('Could not find list data in the expected structure');
+          setData([]);
+        }
+      } else if (apiResponse && Array.isArray(apiResponse.list)) {
+        // 直接的 PaginationResultData 格式
+        console.log('Found PaginationResultData directly in response.data');
+        setData(apiResponse.list || []);
+        
+        const paginationInfo = apiResponse.pagination || {};
+        setPagination({
+          current: paginationInfo.currentPage || pageNo,
+          pageSize: paginationInfo.pageSize || pageSize,
+          total: paginationInfo.totalElements || 0,
+        });
+      } else {
+        console.warn('Unexpected data structure. Setting empty data.');
+        setData([]);
+        setPagination({
+          current: pageNo,
+          pageSize: pageSize,
+          total: 0,
+        });
+      }
+      
+      // 在選染後週期中檢查數據狀態
+      setTimeout(() => {
+        console.log('Current data state after processing:', data);
+      }, 0);
+      
     } catch (error) {
       console.error('Error fetching records:', error);
       message.error('獲取地址記錄失敗');
+      setData([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load records on initial mount
+  // Load records on initial mount and whenever dependencies change
   useEffect(() => {
     fetchRecords();
-  }, []);
+    
+    // Debug log to show when the effect is triggered
+    console.log('useEffect triggered, fetching records');
+  }, []); // Empty dependency array means this effect runs once on mount
+  
+  // Debug effect to log data changes
+  useEffect(() => {
+    console.log('Data changed:', data);
+  }, [data]);
 
   /**
    * Handle table pagination change
@@ -74,15 +132,16 @@ const AddressRecords = () => {
     }
 
     // Generate CSV content
-    const headers = ['ID', '地址', '接收時間', '處理結果', '置信度'];
+    const headers = ['ID', '地址', '接收時間', '區域', '街道', '配送區碼'];
     const csvContent = [
       headers.join(','),
-      ...data.map(item => [
-        item.id,
-        `"${item.address.replace(/"/g, '""')}"`, // Escape quotes in CSV
-        item.receiveTime,
-        item.success ? '成功' : '失敗',
-        item.confidence || 'N/A'
+      ...data.map((item, index) => [
+        (index + 1),
+        `"${(item.address || '').replace(/"/g, '""')}"`, // Escape quotes in CSV
+        item.receiveTime || '',
+        item.district || '',
+        item.street || '',
+        item.originalDeliveryZoneCode || ''
       ].join(','))
     ].join('\n');
 
@@ -95,15 +154,17 @@ const AddressRecords = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    message.success('數據導出成功');
   };
 
   // Define table columns
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'id',
       key: 'id',
       width: 80,
+      render: (_, __, index) => index + 1,
     },
     {
       title: '地址',
@@ -115,24 +176,38 @@ const AddressRecords = () => {
       title: '接收時間',
       dataIndex: 'receiveTime',
       key: 'receiveTime',
-      render: (text) => formatDate(text),
+      render: (text) => text ? formatDate(text) : 'N/A',
     },
     {
-      title: '處理結果',
-      dataIndex: 'success',
-      key: 'success',
-      render: (success) => (
-        success ? 
-          <Tag color="success">成功</Tag> : 
-          <Tag color="error">失敗</Tag>
-      ),
-      width: 120,
+      title: '區域',
+      dataIndex: 'district',
+      key: 'district',
+      render: (text) => text || 'N/A',
     },
     {
-      title: '置信度',
-      dataIndex: 'confidence',
-      key: 'confidence',
-      render: (confidence) => confidence ? `${(confidence * 100).toFixed(2)}%` : 'N/A',
+      title: '街道',
+      dataIndex: 'street',
+      key: 'street',
+      render: (text) => text || 'N/A',
+    },
+    {
+      title: '配送區編碼',
+      dataIndex: 'originalDeliveryZoneCode',
+      key: 'originalDeliveryZoneCode',
+      render: (text) => text || 'N/A',
+    },
+    {
+      title: '是否配送',
+      dataIndex: 'willDeliver',
+      key: 'willDeliver',
+      render: (text) => {
+        if (text === 'true' || text === true) {
+          return <Tag color="success">可配送</Tag>;
+        } else if (text === 'false' || text === false) {
+          return <Tag color="error">不可配送</Tag>;
+        }
+        return <Tag color="default">N/A</Tag>;
+      },
       width: 120,
     },
     {
@@ -190,7 +265,7 @@ const AddressRecords = () => {
         <Table
           columns={columns}
           dataSource={data}
-          rowKey="id"
+          rowKey={(record, index) => index}
           pagination={pagination}
           loading={loading}
           onChange={handleTableChange}
